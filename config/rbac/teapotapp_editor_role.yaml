@@ -1,0 +1,24 @@
+# permissions for end users to edit teapotapps.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: teapotapp-editor-role
+rules:
+- apiGroups:
+  - k8s.418.cloud
+  resources:
+  - teapotapps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - k8s.418.cloud
+  resources:
+  - teapotapps/status
+  verbs:
+  - get

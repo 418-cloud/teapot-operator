@@ -1,0 +1,99 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments/status
+  verbs:
+  - get
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers/status
+  verbs:
+  - get
+- apiGroups:
+  - k8s.418.cloud
+  resources:
+  - teapotapps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - k8s.418.cloud
+  resources:
+  - teapotapps/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - k8s.418.cloud
+  resources:
+  - teapotapps/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - traefik.containo.us
+  resources:
+  - ingressroutes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - traefik.containo.us
+  resources:
+  - ingressroutes/status
+  verbs:
+  - get

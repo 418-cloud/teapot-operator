@@ -1,0 +1,20 @@
+apiVersion: k8s.418.cloud/v1alpha1
+kind: TeapotApp
+metadata:
+  name: teapotapp-sample
+spec:
+  image: ghcr.io/tjololo/hello-go-web:v1.1.0
+  scale:
+    replicas: 1
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 4
+  path: /hello
+  # resources:
+  #   limits:
+  #     cpu: 50m
+  #     memory: 50Mi
+  #   requests:
+  #     cpu: 20m
+  #     memory: 50Mi

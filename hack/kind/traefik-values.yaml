@@ -1,0 +1,29 @@
+---
+providers:
+  kubernetesCRD:
+    namespaces:
+      - default
+      - traefik
+  kubernetesIngress:
+    namespaces:
+      - default
+      - traefik
+
+deployment:
+  podAnnotations:
+    linkerd.io/inject: enabled
+
+ports:
+  traefik:
+    expose: true
+    nodePort: 32090
+  web:
+    nodePort: 32080
+  websecure:
+    nodePort: 32443
+
+additionalArguments:
+  - "--entryPoints.web.forwardedHeaders.insecure"
+  - "--entrypoints.websecure.forwardedHeaders.insecure"
+  - "--entryPoints.web.proxyProtocol.insecure"
+  - "--entryPoints.websecure.proxyProtocol.insecure"

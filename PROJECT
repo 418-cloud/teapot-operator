@@ -1,0 +1,16 @@
+domain: 418.cloud
+layout:
+- go.kubebuilder.io/v3
+projectName: k8s-operator
+repo: github.com/418-cloud/gitops-devopsdays/k8s-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: 418.cloud
+  group: k8s
+  kind: TeapotApp
+  path: github.com/418-cloud/gitops-devopsdays/k8s-operator/api/v1alpha1
+  version: v1alpha1
+version: "3"
