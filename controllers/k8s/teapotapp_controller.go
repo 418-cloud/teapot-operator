@@ -33,20 +33,18 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	k8sv1alpha1 "github.com/418-cloud/teapot-operator/api/v1alpha1"
+	configv2 "github.com/418-cloud/teapot-operator/apis/config/v2"
+	k8sv1alpha1 "github.com/418-cloud/teapot-operator/apis/k8s/v1alpha1"
 	"github.com/418-cloud/teapot-operator/pkg/utils/locators"
 	"github.com/418-cloud/teapot-operator/pkg/utils/to"
 	traefikv1alpha1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefik/v1alpha1"
-)
-
-const (
-	Host = "localhost"
 )
 
 // TeapotAppReconciler reconciles a TeapotApp object
 type TeapotAppReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
+	Config configv2.ProjectConfig
 }
 
 //+kubebuilder:rbac:groups=k8s.418.cloud,resources=teapotapps,verbs=get;list;watch;create;update;patch;delete
@@ -135,7 +133,7 @@ func (r *TeapotAppReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		log.Info("IngressRoute outdated, updating IngressRoute")
 		return ctrl.Result{}, r.updateIngressRoute(ctx, &teapotapp, ingressRoute)
 	}
-	teapotapp.Status.Route = fmt.Sprintf("http://%s:9080%s", Host, teapotapp.GetPath())
+	teapotapp.Status.Route = fmt.Sprintf("%s://%s%s", r.Config.Protocol, r.Config.Domain, teapotapp.GetPath())
 	teapotapp.Status.DeploymentStatus = deployment.Status
 	if err := r.Status().Update(ctx, &teapotapp); err != nil {
 		log.Error(err, "unable to update TeapotApp status")
@@ -185,7 +183,7 @@ func (r *TeapotAppReconciler) createNewService(ctx context.Context, teapotapp *k
 }
 
 func (r *TeapotAppReconciler) createNewIngressRoute(ctx context.Context, teapotapp *k8sv1alpha1.TeapotApp) error {
-	s := newIngressRoute(teapotapp)
+	s := newIngressRoute(teapotapp, r.Config.Domain)
 	if err := r.Create(ctx, &s); err != nil {
 		return fmt.Errorf("unable to create ingressroute. %v", err)
 	}
@@ -363,7 +361,7 @@ func newService(teapotapp *k8sv1alpha1.TeapotApp) corev1.Service {
 	return s
 }
 
-func newIngressRoute(teapotapp *k8sv1alpha1.TeapotApp) traefikv1alpha1.IngressRoute {
+func newIngressRoute(teapotapp *k8sv1alpha1.TeapotApp, domain string) traefikv1alpha1.IngressRoute {
 	return traefikv1alpha1.IngressRoute{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      teapotapp.Name,
@@ -384,9 +382,10 @@ func newIngressRoute(teapotapp *k8sv1alpha1.TeapotApp) traefikv1alpha1.IngressRo
 			APIVersion: "traefik.containo.us/v1alpha1",
 		},
 		Spec: traefikv1alpha1.IngressRouteSpec{
+			EntryPoints: []string{"web", "websecure"},
 			Routes: []traefikv1alpha1.Route{
 				{
-					Match: "Host(`" + Host + "`) && PathPrefix(`" + teapotapp.Spec.Path + "`)",
+					Match: "Host(`" + domain + "`) && PathPrefix(`" + teapotapp.Spec.Path + "`)",
 					Kind:  "Rule",
 					Services: []traefikv1alpha1.Service{
 						{
