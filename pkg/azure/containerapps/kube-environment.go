@@ -5,8 +5,8 @@ import (
 
 	azurev1alpha1 "github.com/418-cloud/teapot-operator/apis/azure/v1alpha1"
 	"github.com/418-cloud/teapot-operator/pkg/utils/to"
-	"github.com/Azure/azure-sdk-for-go/services/web/mgmt/2021-03-01/web"
 	"github.com/Azure/azure-sdk-for-go/services/operationalinsights/mgmt/2020-08-01/operationalinsights"
+	"github.com/Azure/azure-sdk-for-go/services/web/mgmt/2021-03-01/web"
 	"github.com/Azure/go-autorest/autorest"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
@@ -22,6 +22,7 @@ func CreateNewKubeEnvironment(ctx context.Context, authorizer autorest.Authorize
 	client := web.NewKubeEnvironmentsClient(subscription)
 	client.Authorizer = authorizer
 	kubeenv := web.KubeEnvironment{
+		Location: &env.Spec.Location,
 		KubeEnvironmentProperties: &web.KubeEnvironmentProperties{
 			InternalLoadBalancerEnabled: to.BoolPtr(false),
 			AppLogsConfiguration: &web.AppLogsConfiguration{
@@ -64,6 +65,7 @@ func createNewLogAnalytics(ctx context.Context, authorizer autorest.Authorizer, 
 	client := operationalinsights.NewWorkspacesClient(subscription)
 	client.Authorizer = authorizer
 	workspace := operationalinsights.Workspace{
+		Location: &env.Spec.Location,
 		WorkspaceProperties: &operationalinsights.WorkspaceProperties{
 			RetentionInDays: to.Int32Ptr(10),
 		},

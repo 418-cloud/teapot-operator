@@ -3,4 +3,5 @@ kind: ContainerEnvironment
 metadata:
   name: containerenvironment-sample
 spec:
-  # TODO(user): Add fields here
+  name: example-kubeenv
+  location: westeurope

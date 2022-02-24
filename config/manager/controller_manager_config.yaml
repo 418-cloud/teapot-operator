@@ -11,3 +11,4 @@ leaderElection:
   resourceName: b1ba06c1.418.cloud
 domain: example.com
 protocol: https
+resourceGroupName: teapot-shadow-rg
