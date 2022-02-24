@@ -27,7 +27,6 @@ import (
 
 	azurev1alpha1 "github.com/418-cloud/teapot-operator/apis/azure/v1alpha1"
 	configv2 "github.com/418-cloud/teapot-operator/apis/config/v2"
-	azureclient "github.com/418-cloud/teapot-operator/pkg/azure/client"
 	"github.com/418-cloud/teapot-operator/pkg/azure/containerapps"
 	"github.com/Azure/go-autorest/autorest"
 )
@@ -63,10 +62,9 @@ func (r *ContainerEnvironmentReconciler) Reconcile(ctx context.Context, req ctrl
 		}
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-	authorizer := azureclient.GetAuthorizer()
-	kubeEnv, err := containerapps.GetKubeEnvironment(ctx, authorizer, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
+	kubeEnv, err := containerapps.GetKubeEnvironment(ctx, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
 	if e, ok := err.(autorest.DetailedError); ok && e.Response.StatusCode == 404 {
-		kubeEnv, err = containerapps.CreateNewKubeEnvironment(ctx, authorizer, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
+		kubeEnv, err = containerapps.CreateNewKubeEnvironment(ctx, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
 		if err != nil {
 			log.Error(err, "unable to create kube environment")
 			return ctrl.Result{}, err
