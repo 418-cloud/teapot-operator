@@ -33,8 +33,10 @@ import (
 
 	traefikv1alpha1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefik/v1alpha1"
 
+	azurev1alpha1 "github.com/418-cloud/teapot-operator/apis/azure/v1alpha1"
 	configv2 "github.com/418-cloud/teapot-operator/apis/config/v2"
 	k8sv1alpha1 "github.com/418-cloud/teapot-operator/apis/k8s/v1alpha1"
+	azurecontrollers "github.com/418-cloud/teapot-operator/controllers/azure"
 	controllers "github.com/418-cloud/teapot-operator/controllers/k8s"
 	//+kubebuilder:scaffold:imports
 )
@@ -50,6 +52,7 @@ func init() {
 	utilruntime.Must(k8sv1alpha1.AddToScheme(scheme))
 	utilruntime.Must(traefikv1alpha1.AddToScheme(scheme))
 	utilruntime.Must(configv2.AddToScheme(scheme))
+	utilruntime.Must(azurev1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -101,6 +104,13 @@ func main() {
 		Config: ctrlConfig,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "TeapotApp")
+		os.Exit(1)
+	}
+	if err = (&azurecontrollers.ContainerEnvironmentReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ContainerEnvironment")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

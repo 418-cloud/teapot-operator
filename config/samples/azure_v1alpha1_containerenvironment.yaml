@@ -1,0 +1,6 @@
+apiVersion: azure.418.cloud/v1alpha1
+kind: ContainerEnvironment
+metadata:
+  name: containerenvironment-sample
+spec:
+  # TODO(user): Add fields here

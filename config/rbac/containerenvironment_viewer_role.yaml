@@ -1,0 +1,20 @@
+# permissions for end users to view containerenvironments.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: containerenvironment-viewer-role
+rules:
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerenvironments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerenvironments/status
+  verbs:
+  - get

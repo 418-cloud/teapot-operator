@@ -22,4 +22,13 @@ resources:
   kind: ProjectConfig
   path: github.com/418-cloud/teapot-operator/apis/config/v2
   version: v2
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: 418.cloud
+  group: azure
+  kind: ContainerEnvironment
+  path: github.com/418-cloud/teapot-operator/apis/azure/v1alpha1
+  version: v1alpha1
 version: "3"

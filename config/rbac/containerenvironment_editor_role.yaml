@@ -1,0 +1,24 @@
+# permissions for end users to edit containerenvironments.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: containerenvironment-editor-role
+rules:
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerenvironments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerenvironments/status
+  verbs:
+  - get
