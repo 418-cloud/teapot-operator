@@ -36,7 +36,7 @@ import (
 type ContainerEnvironmentReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
-	Config *configv2.ProjectConfig
+	Config configv2.ProjectConfig
 }
 
 //+kubebuilder:rbac:groups=azure.418.cloud,resources=containerenvironments,verbs=get;list;watch;create;update;patch;delete
