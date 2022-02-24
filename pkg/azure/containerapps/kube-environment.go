@@ -5,8 +5,8 @@ import (
 
 	azurev1alpha1 "github.com/418-cloud/teapot-operator/apis/azure/v1alpha1"
 	"github.com/418-cloud/teapot-operator/pkg/utils/to"
-	"github.com/Azure/azure-sdk-for-go/services/operationalinsights/mgmt/2020-08-01/operationalinsights"
 	"github.com/Azure/azure-sdk-for-go/profiles/latest/web/mgmt/web"
+	"github.com/Azure/azure-sdk-for-go/services/operationalinsights/mgmt/2020-08-01/operationalinsights"
 	"github.com/Azure/go-autorest/autorest"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
@@ -27,7 +27,7 @@ func CreateNewKubeEnvironment(ctx context.Context, authorizer autorest.Authorize
 			AppLogsConfiguration: &web.AppLogsConfiguration{
 				LogAnalyticsConfiguration: &web.LogAnalyticsConfiguration{
 					CustomerID: &id,
-					SharedKey: &key,
+					SharedKey:  &key,
 				},
 			},
 		},
@@ -46,7 +46,7 @@ func CreateNewKubeEnvironment(ctx context.Context, authorizer autorest.Authorize
 		log.Error(err, "failed to get result")
 		return err
 	}
-	
+
 	return nil
 }
 

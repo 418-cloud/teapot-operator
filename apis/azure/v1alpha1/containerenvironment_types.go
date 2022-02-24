@@ -29,7 +29,7 @@ type ContainerEnvironmentSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of ContainerEnvironment. Edit containerenvironment_types.go to remove/update
-	Name string `json:"name,omitempty"`
+	Name     string `json:"name,omitempty"`
 	Location string `json:"location,omitempty"`
 }
 

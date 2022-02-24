@@ -54,6 +54,32 @@ rules:
   verbs:
   - get
 - apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerenvironments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerenvironments/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerenvironments/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - k8s.418.cloud
   resources:
   - teapotapps
