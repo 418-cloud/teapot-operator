@@ -10,6 +10,7 @@ spec:
       - name: manager
         args:
         - "--config=controller_manager_config.yaml"
+        - "--subscription=${azure_subscription}"
         volumeMounts:
         - name: manager-config
           mountPath: /controller_manager_config.yaml

@@ -37,6 +37,10 @@ type ContainerEnvironmentSpec struct {
 type ContainerEnvironmentStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	EnvironmentID     string `json:"environmentID,omitempty"`
+	EnvironmentName   string `json:"environmentName,omitempty"`
+	EnvironmentIP     string `json:"environmentIP,omitempty"`
+	EnvironmentStatus string `json:"environmentStatus,omitempty"`
 }
 
 //+kubebuilder:object:root=true

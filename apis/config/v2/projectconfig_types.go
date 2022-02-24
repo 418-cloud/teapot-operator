@@ -34,6 +34,8 @@ type ProjectConfig struct {
 	Domain                                 string `json:"domain,omitempty"`
 	Protocol                               string `json:"protocol,omitempty"`
 	DefaultScale                           int    `json:"defaultScale,omitempty"`
+	ResourceGroupName                      string `json:"resourceGroupName,omitempty"`
+	Subscription                           string `json:"subscription,omitempty"`
 }
 
 func init() {
