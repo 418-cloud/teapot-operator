@@ -55,9 +55,9 @@ func clientAssertionBearerAuthorizerCallback(tenantID, resource string) (*autore
 	// trim the suffix / if exists
 	resource = strings.TrimSuffix(resource, "/")
 	// .default needs to be added to the scope
-	if !strings.HasSuffix(resource, ".default") {
-		resource += "/.default"
-	}
+	// if !strings.HasSuffix(resource, ".default") {
+	// 	resource += "/.default"
+	// }
 
 	result, err := confidentialClientApp.AcquireTokenByCredential(context.Background(), []string{resource})
 	if err != nil {

@@ -5,7 +5,6 @@ go 1.17
 require (
 	github.com/Azure/azure-sdk-for-go v61.6.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.11.19
-	github.com/Azure/go-autorest/autorest/adal v0.9.13
 	github.com/AzureAD/microsoft-authentication-library-for-go v0.4.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.17.0
@@ -21,6 +20,7 @@ require (
 require (
 	cloud.google.com/go v0.81.0 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
+	github.com/Azure/go-autorest/autorest/adal v0.9.13 // indirect
 	github.com/Azure/go-autorest/autorest/date v0.3.0 // indirect
 	github.com/Azure/go-autorest/autorest/to v0.4.0 // indirect
 	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
