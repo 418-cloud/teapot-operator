@@ -29,21 +29,23 @@ type ContainerAppSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	//ContainerEnvironmentName name of the ContainerEnvironment where the ContainerApp is deployed
-	ContainerEnvironmentName string             `json:"containerEnvironmentName"`
+	ContainerEnvironmentName string `json:"containerEnvironmentName"`
 	//ContainersTemplate template for the deployed containers
-	ContainersTemplate       ContainersTemplate `json:"containersTemplate"`
+	ContainersTemplate ContainersTemplate `json:"containersTemplate"`
 	//TargetPort port the container listens to
-	TargetPort               int32              `json:"targetPort"`
+	TargetPort int32 `json:"targetPort"`
 }
 
 // ContainerAppStatus defines the observed state of ContainerApp
 type ContainerAppStatus struct {
 	LatestStatus string `json:"latestStatus,omitempty"`
+	FQDN         string `json:"fqdn,omitempty"`
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
 
 //+kubebuilder:object:root=true
+//+kubebuilder:printcolumn:name="FQDN",type=string,JSONPath=`.status.fqdn`
 //+kubebuilder:subresource:status
 
 // ContainerApp is the Schema for the containerapps API

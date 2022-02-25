@@ -15,7 +15,11 @@ spec:
     singular: containerapp
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .status.fqdn
+      name: FQDN
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: ContainerApp is the Schema for the containerapps API
@@ -74,6 +78,8 @@ spec:
           status:
             description: ContainerAppStatus defines the observed state of ContainerApp
             properties:
+              fqdn:
+                type: string
               latestStatus:
                 type: string
             type: object
