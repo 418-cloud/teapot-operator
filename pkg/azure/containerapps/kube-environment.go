@@ -12,15 +12,17 @@ import (
 )
 
 func CreateNewKubeEnvironment(ctx context.Context, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (*web.KubeEnvironment, error) {
-	log := log.FromContext(ctx).WithValues("subscription", subscription, "resourcegroup", resourcegroup)
+	logger := log.FromContext(ctx).WithValues("subscription", subscription, "resourcegroup", resourcegroup)
 	id, key, err := createNewLogAnalytics(ctx, env, subscription, resourcegroup)
 	if err != nil {
-		log.Error(err, "failed to create new log analytics workspace")
+		logger.Error(err, "failed to create new log analytics workspace")
 		return nil, err
 	}
-	log.Info("created new log analytics workspace", "workspace", id)
+	logger.Info("created new log analytics workspace", "workspace", id)
 	client := web.NewKubeEnvironmentsClient(subscription)
+
 	client.Authorizer = autorest.NewBearerAuthorizerCallback(nil, clientAssertionBearerAuthorizerCallback)
+	logger.Info("created new kube environment client", "subscription", subscription, "resourcegroup", resourcegroup)
 	kubeenv := web.KubeEnvironment{
 		Location: &env.Spec.Location,
 		KubeEnvironmentProperties: &web.KubeEnvironmentProperties{
@@ -35,16 +37,16 @@ func CreateNewKubeEnvironment(ctx context.Context, env azurev1alpha1.ContainerEn
 	}
 	future, err := client.CreateOrUpdate(ctx, resourcegroup, env.Name, kubeenv)
 	if err != nil {
-		log.Error(err, "failed to create new kube environment")
+		logger.Error(err, "failed to create new kube environment")
 		return nil, err
 	}
 	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		log.Error(err, "failed to wait for completion")
+		logger.Error(err, "failed to wait for completion")
 		return nil, err
 	}
 	ke, err := future.Result(client)
 	if err != nil {
-		log.Error(err, "failed to get result")
+		logger.Error(err, "failed to get result")
 		return nil, err
 	}
 
@@ -52,8 +54,11 @@ func CreateNewKubeEnvironment(ctx context.Context, env azurev1alpha1.ContainerEn
 }
 
 func GetKubeEnvironment(ctx context.Context, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (*web.KubeEnvironment, error) {
+	logger := log.FromContext(ctx).WithValues("func", "GetKubeEnvironment", "subscription", subscription, "resourcegroup", resourcegroup)
 	client := web.NewKubeEnvironmentsClient(subscription)
+	logger.Info("setting authorizer")
 	client.Authorizer = autorest.NewBearerAuthorizerCallback(nil, clientAssertionBearerAuthorizerCallback)
+	logger.Info("fetching kube environment")
 	ke, err := client.Get(ctx, resourcegroup, env.Name)
 	if err != nil {
 		return nil, err
