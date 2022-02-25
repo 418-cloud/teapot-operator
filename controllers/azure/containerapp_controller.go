@@ -19,6 +19,7 @@ package azure
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -112,7 +113,7 @@ func (r *ContainerAppReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		logger.Error(err, "unable to update ContainerApp status")
 		return ctrl.Result{}, err
 	}
-	return ctrl.Result{}, nil
+	return ctrl.Result{RequeueAfter: 60 * time.Second}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
