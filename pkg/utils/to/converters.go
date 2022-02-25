@@ -9,3 +9,8 @@ func BoolPtr(b bool) *bool {
 func Int32Ptr(i int32) *int32 {
 	return &i
 }
+
+//StringPtr returns a pointer to the passed string.
+func StringPtr(s string) *string {
+	return &s
+}

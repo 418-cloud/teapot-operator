@@ -24,6 +24,7 @@ func CreateNewKubeEnvironment(ctx context.Context, authorizer autorest.Authorize
 	client.Authorizer = authorizer
 	logger.Info("created new kube environment client", "subscription", subscription, "resourcegroup", resourcegroup)
 	kubeenv := web.KubeEnvironment{
+		Type: to.StringPtr("Managed"),
 		Location: &env.Spec.Location,
 		KubeEnvironmentProperties: &web.KubeEnvironmentProperties{
 			InternalLoadBalancerEnabled: to.BoolPtr(false),
