@@ -27,6 +27,7 @@ import (
 
 	azurev1alpha1 "github.com/418-cloud/teapot-operator/apis/azure/v1alpha1"
 	configv2 "github.com/418-cloud/teapot-operator/apis/config/v2"
+	azureclient "github.com/418-cloud/teapot-operator/pkg/azure/client"
 	"github.com/418-cloud/teapot-operator/pkg/azure/containerapps"
 	"github.com/Azure/go-autorest/autorest"
 )
@@ -34,8 +35,9 @@ import (
 // ContainerEnvironmentReconciler reconciles a ContainerEnvironment object
 type ContainerEnvironmentReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
-	Config configv2.ProjectConfig
+	Scheme       *runtime.Scheme
+	Config       configv2.ProjectConfig
+	ClientConfig azureclient.ClientConfig
 }
 
 //+kubebuilder:rbac:groups=azure.418.cloud,resources=containerenvironments,verbs=get;list;watch;create;update;patch;delete
@@ -52,26 +54,31 @@ type ContainerEnvironmentReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile
 func (r *ContainerEnvironmentReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := log.FromContext(ctx)
+	logger := log.FromContext(ctx)
 
 	// TODO(user): your logic here
 	var containerenvironment azurev1alpha1.ContainerEnvironment
 	if err := r.Get(ctx, req.NamespacedName, &containerenvironment); err != nil {
 		if !errors.IsNotFound(err) {
-			log.Error(err, "unable to fetch TeapotApp")
+			logger.Error(err, "unable to fetch TeapotApp")
 		}
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-	_, err := containerapps.GetKubeEnvironment(ctx, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
+	a, err := azureclient.GetAuthorizer(r.ClientConfig)
+	if err != nil {
+		logger.Error(err, "unable to get authorizer")
+		return ctrl.Result{}, err
+	}
+	_, err = containerapps.GetKubeEnvironment(ctx, a, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
 	if e, ok := err.(autorest.DetailedError); ok && e.Response.StatusCode == 404 {
-		log.Info("Creating new kube environment")
+		logger.Info("Creating new kube environment")
 		// kubeEnv, err = containerapps.CreateNewKubeEnvironment(ctx, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
 		// if err != nil {
 		// 	log.Error(err, "unable to create kube environment")
 		// 	return ctrl.Result{}, err
 		// }
 	} else if err != nil {
-		log.Error(err, "unable to get kube environment")
+		logger.Error(err, "unable to get kube environment")
 		return ctrl.Result{}, err
 	}
 	// containerenvironment.Status.EnvironmentID = *kubeEnv.ID

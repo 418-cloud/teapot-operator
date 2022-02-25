@@ -11,9 +11,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-func CreateNewKubeEnvironment(ctx context.Context, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (*web.KubeEnvironment, error) {
+func CreateNewKubeEnvironment(ctx context.Context, authorizer autorest.Authorizer, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (*web.KubeEnvironment, error) {
 	logger := log.FromContext(ctx).WithValues("subscription", subscription, "resourcegroup", resourcegroup)
-	id, key, err := createNewLogAnalytics(ctx, env, subscription, resourcegroup)
+	id, key, err := createNewLogAnalytics(ctx, authorizer, env, subscription, resourcegroup)
 	if err != nil {
 		logger.Error(err, "failed to create new log analytics workspace")
 		return nil, err
@@ -21,7 +21,7 @@ func CreateNewKubeEnvironment(ctx context.Context, env azurev1alpha1.ContainerEn
 	logger.Info("created new log analytics workspace", "workspace", id)
 	client := web.NewKubeEnvironmentsClient(subscription)
 
-	client.Authorizer = autorest.NewBearerAuthorizerCallback(nil, clientAssertionBearerAuthorizerCallback)
+	client.Authorizer = authorizer
 	logger.Info("created new kube environment client", "subscription", subscription, "resourcegroup", resourcegroup)
 	kubeenv := web.KubeEnvironment{
 		Location: &env.Spec.Location,
@@ -53,11 +53,11 @@ func CreateNewKubeEnvironment(ctx context.Context, env azurev1alpha1.ContainerEn
 	return &ke, nil
 }
 
-func GetKubeEnvironment(ctx context.Context, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (*web.KubeEnvironment, error) {
+func GetKubeEnvironment(ctx context.Context, authorizer autorest.Authorizer, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (*web.KubeEnvironment, error) {
 	logger := log.FromContext(ctx).WithValues("func", "GetKubeEnvironment", "subscription", subscription, "resourcegroup", resourcegroup)
 	client := web.NewKubeEnvironmentsClient(subscription)
 	logger.Info("setting authorizer")
-	client.Authorizer = autorest.NewBearerAuthorizerCallback(nil, clientAssertionBearerAuthorizerCallback)
+	client.Authorizer = authorizer
 	logger.Info("fetching kube environment")
 	ke, err := client.Get(ctx, resourcegroup, env.Name)
 	if err != nil {
@@ -66,9 +66,9 @@ func GetKubeEnvironment(ctx context.Context, env azurev1alpha1.ContainerEnvironm
 	return &ke, nil
 }
 
-func createNewLogAnalytics(ctx context.Context, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (customerID, sharedKey string, err error) {
+func createNewLogAnalytics(ctx context.Context, authorizer autorest.Authorizer, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (customerID, sharedKey string, err error) {
 	client := operationalinsights.NewWorkspacesClient(subscription)
-	client.Authorizer = autorest.NewBearerAuthorizerCallback(nil, clientAssertionBearerAuthorizerCallback)
+	client.Authorizer = authorizer
 	workspace := operationalinsights.Workspace{
 		Location: &env.Spec.Location,
 		WorkspaceProperties: &operationalinsights.WorkspaceProperties{
@@ -88,7 +88,7 @@ func createNewLogAnalytics(ctx context.Context, env azurev1alpha1.ContainerEnvir
 	}
 	customerID = *w.CustomerID
 	sharedKeysClient := operationalinsights.NewSharedKeysClient(subscription)
-	sharedKeysClient.Authorizer = autorest.NewBearerAuthorizerCallback(nil, clientAssertionBearerAuthorizerCallback)
+	sharedKeysClient.Authorizer = authorizer
 	k, err := sharedKeysClient.GetSharedKeys(ctx, resourcegroup, env.Name)
 	if err != nil {
 		return

@@ -17,7 +17,9 @@ limitations under the License.
 package main
 
 import (
+	"encoding/json"
 	"flag"
+	"io/ioutil"
 	"os"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -38,6 +40,7 @@ import (
 	k8sv1alpha1 "github.com/418-cloud/teapot-operator/apis/k8s/v1alpha1"
 	azurecontrollers "github.com/418-cloud/teapot-operator/controllers/azure"
 	controllers "github.com/418-cloud/teapot-operator/controllers/k8s"
+	azureclient "github.com/418-cloud/teapot-operator/pkg/azure/client"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -101,7 +104,7 @@ func main() {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
-
+	c, err := readClientConfig("/azure-client-config.json")
 	if err = (&controllers.TeapotAppReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
@@ -111,9 +114,10 @@ func main() {
 		os.Exit(1)
 	}
 	if err = (&azurecontrollers.ContainerEnvironmentReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-		Config: ctrlConfig,
+		Client:       mgr.GetClient(),
+		Scheme:       mgr.GetScheme(),
+		Config:       ctrlConfig,
+		ClientConfig: c,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ContainerEnvironment")
 		os.Exit(1)
@@ -134,4 +138,13 @@ func main() {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
+}
+
+func readClientConfig(jsonFile string) (c azureclient.ClientConfig, err error) {
+	jsonBytes, err := ioutil.ReadFile(jsonFile)
+	if err != nil {
+		return azureclient.ClientConfig{}, err
+	}
+	err = json.Unmarshal(jsonBytes, &c)
+	return
 }

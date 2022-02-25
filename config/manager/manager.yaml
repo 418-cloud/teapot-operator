@@ -54,5 +54,13 @@ spec:
           requests:
             cpu: 10m
             memory: 64Mi
+        volumeMounts:
+        - mountPath: /azure-client-config.json
+          name: client-config
+          subPath: azure-client-config.json
       serviceAccountName: controller-manager
       terminationGracePeriodSeconds: 10
+      volumes:
+      - secret:
+          name: azure-client-config
+        name: client-config
