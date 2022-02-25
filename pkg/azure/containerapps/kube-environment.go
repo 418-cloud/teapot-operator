@@ -26,7 +26,7 @@ func CreateNewKubeEnvironment(ctx context.Context, authorizer autorest.Authorize
 	kubeenv := web.KubeEnvironment{
 		Location: &env.Spec.Location,
 		KubeEnvironmentProperties: &web.KubeEnvironmentProperties{
-			EnvironmentType: to.StringPtr("Managed"),
+			EnvironmentType:             to.StringPtr("Managed"),
 			InternalLoadBalancerEnabled: to.BoolPtr(false),
 			AppLogsConfiguration: &web.AppLogsConfiguration{
 				Destination: to.StringPtr("log-analytics"),

@@ -36,7 +36,7 @@ import (
 // ContainerAppReconciler reconciles a ContainerApp object
 type ContainerAppReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme       *runtime.Scheme
 	Config       configv2.ProjectConfig
 	ClientConfig azureclient.ClientConfig
 }

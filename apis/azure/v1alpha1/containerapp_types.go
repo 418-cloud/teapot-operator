@@ -28,11 +28,11 @@ type ContainerAppSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of ContainerApp. Edit containerapp_types.go to remove/update
-	// +kubebuilder:validation:MinLength=1
-	Name                     string             `json:"name"`
+	//ContainerEnvironmentName name of the ContainerEnvironment where the ContainerApp is deployed
 	ContainerEnvironmentName string             `json:"containerEnvironmentName"`
+	//ContainersTemplate template for the deployed containers
 	ContainersTemplate       ContainersTemplate `json:"containersTemplate"`
+	//TargetPort port the container listens to
 	TargetPort               int32              `json:"targetPort"`
 }
 
@@ -78,5 +78,5 @@ type ContainersTemplate struct {
 //ContainersTemplateResources defines the desired state of resources inside a ContainerTemplate
 type ContainersTemplateResources struct {
 	CPU    string `json:"cpu"`
-	Memory string  `json:"memory"`
+	Memory string `json:"memory"`
 }

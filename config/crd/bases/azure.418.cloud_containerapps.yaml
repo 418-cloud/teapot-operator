@@ -36,10 +36,11 @@ spec:
             description: ContainerAppSpec defines the desired state of ContainerApp
             properties:
               containerEnvironmentName:
+                description: ContainerEnvironmentName name of the ContainerEnvironment
+                  where the ContainerApp is deployed
                 type: string
               containersTemplate:
-                description: ContainersTemplate defines the desired state of Container
-                  inside a ContainerApp
+                description: ContainersTemplate template for the deployed containers
                 properties:
                   image:
                     type: string
@@ -61,18 +62,13 @@ spec:
                 - image
                 - name
                 type: object
-              name:
-                description: Foo is an example field of ContainerApp. Edit containerapp_types.go
-                  to remove/update
-                minLength: 1
-                type: string
               targetPort:
+                description: TargetPort port the container listens to
                 format: int32
                 type: integer
             required:
             - containerEnvironmentName
             - containersTemplate
-            - name
             - targetPort
             type: object
           status:
