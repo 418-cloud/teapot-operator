@@ -72,7 +72,7 @@ func createNewLogAnalytics(ctx context.Context, authorizer autorest.Authorizer, 
 	workspace := operationalinsights.Workspace{
 		Location: &env.Spec.Location,
 		WorkspaceProperties: &operationalinsights.WorkspaceProperties{
-			RetentionInDays: to.Int32Ptr(10),
+			RetentionInDays: to.Int32Ptr(30),
 		},
 	}
 	future, err := client.CreateOrUpdate(ctx, resourcegroup, env.Name, workspace)
