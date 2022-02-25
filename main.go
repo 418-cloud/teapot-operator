@@ -129,6 +129,8 @@ func main() {
 	if err = (&azurecontrollers.ContainerAppReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
+		Config: ctrlConfig,
+		ClientConfig: c,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ContainerApp")
 		os.Exit(1)
