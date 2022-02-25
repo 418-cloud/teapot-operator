@@ -29,6 +29,7 @@ func CreateNewKubeEnvironment(ctx context.Context, authorizer autorest.Authorize
 			EnvironmentType: to.StringPtr("Managed"),
 			InternalLoadBalancerEnabled: to.BoolPtr(false),
 			AppLogsConfiguration: &web.AppLogsConfiguration{
+				Destination: to.StringPtr("log-analytics"),
 				LogAnalyticsConfiguration: &web.LogAnalyticsConfiguration{
 					CustomerID: &id,
 					SharedKey:  &key,
