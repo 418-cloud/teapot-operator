@@ -62,26 +62,27 @@ func (r *ContainerEnvironmentReconciler) Reconcile(ctx context.Context, req ctrl
 		}
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-	kubeEnv, err := containerapps.GetKubeEnvironment(ctx, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
+	_, err := containerapps.GetKubeEnvironment(ctx, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
 	if e, ok := err.(autorest.DetailedError); ok && e.Response.StatusCode == 404 {
-		kubeEnv, err = containerapps.CreateNewKubeEnvironment(ctx, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
-		if err != nil {
-			log.Error(err, "unable to create kube environment")
-			return ctrl.Result{}, err
-		}
+		log.Info("Creating new kube environment")
+		// kubeEnv, err = containerapps.CreateNewKubeEnvironment(ctx, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
+		// if err != nil {
+		// 	log.Error(err, "unable to create kube environment")
+		// 	return ctrl.Result{}, err
+		// }
 	} else if err != nil {
 		log.Error(err, "unable to get kube environment")
 		return ctrl.Result{}, err
 	}
-	containerenvironment.Status.EnvironmentID = *kubeEnv.ID
-	containerenvironment.Status.EnvironmentName = *kubeEnv.Name
-	containerenvironment.Status.EnvironmentIP = *kubeEnv.StaticIP
-	containerenvironment.Status.EnvironmentStatus = kubeEnv.Status
+	// containerenvironment.Status.EnvironmentID = *kubeEnv.ID
+	// containerenvironment.Status.EnvironmentName = *kubeEnv.Name
+	// containerenvironment.Status.EnvironmentIP = *kubeEnv.StaticIP
+	// containerenvironment.Status.EnvironmentStatus = kubeEnv.Status
 
-	if err := r.Status().Update(ctx, &containerenvironment); err != nil {
-		log.Error(err, "unable to update status")
-		return ctrl.Result{}, err
-	}
+	// if err := r.Status().Update(ctx, &containerenvironment); err != nil {
+	// 	log.Error(err, "unable to update status")
+	// 	return ctrl.Result{}, err
+	// }
 	return ctrl.Result{}, nil
 }
 

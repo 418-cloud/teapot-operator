@@ -61,7 +61,7 @@ func clientAssertionBearerAuthorizerCallback(tenantID, resource string) (*autore
 
 	result, err := confidentialClientApp.AcquireTokenByCredential(context.Background(), []string{resource})
 	if err != nil {
-		klog.ErrorS(err, "failed to acquire token")
+		klog.ErrorS(err, "failed to acquire token", "scopes", resource)
 		return nil, errors.Wrap(err, "failed to acquire token")
 	}
 
