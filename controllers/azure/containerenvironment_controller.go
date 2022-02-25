@@ -69,27 +69,27 @@ func (r *ContainerEnvironmentReconciler) Reconcile(ctx context.Context, req ctrl
 		logger.Error(err, "unable to get authorizer")
 		return ctrl.Result{}, err
 	}
-	_, err = containerapps.GetKubeEnvironment(ctx, a, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
+	kubeEnv, err := containerapps.GetKubeEnvironment(ctx, a, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
 	if e, ok := err.(autorest.DetailedError); ok && e.Response.StatusCode == 404 {
 		logger.Info("Creating new kube environment")
-		// kubeEnv, err = containerapps.CreateNewKubeEnvironment(ctx, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
-		// if err != nil {
-		// 	log.Error(err, "unable to create kube environment")
-		// 	return ctrl.Result{}, err
-		// }
+		kubeEnv, err = containerapps.CreateNewKubeEnvironment(ctx, a, containerenvironment, r.Config.Subscription, r.Config.ResourceGroupName)
+		if err != nil {
+			logger.Error(err, "unable to create kube environment")
+			return ctrl.Result{}, err
+		}
 	} else if err != nil {
 		logger.Error(err, "unable to get kube environment")
 		return ctrl.Result{}, err
 	}
-	// containerenvironment.Status.EnvironmentID = *kubeEnv.ID
-	// containerenvironment.Status.EnvironmentName = *kubeEnv.Name
-	// containerenvironment.Status.EnvironmentIP = *kubeEnv.StaticIP
-	// containerenvironment.Status.EnvironmentStatus = kubeEnv.Status
+	containerenvironment.Status.EnvironmentID = *kubeEnv.ID
+	containerenvironment.Status.EnvironmentName = *kubeEnv.Name
+	containerenvironment.Status.EnvironmentIP = *kubeEnv.StaticIP
+	containerenvironment.Status.EnvironmentStatus = kubeEnv.Status
 
-	// if err := r.Status().Update(ctx, &containerenvironment); err != nil {
-	// 	log.Error(err, "unable to update status")
-	// 	return ctrl.Result{}, err
-	// }
+	if err := r.Status().Update(ctx, &containerenvironment); err != nil {
+		logger.Error(err, "unable to update status")
+		return ctrl.Result{}, err
+	}
 	return ctrl.Result{}, nil
 }
 

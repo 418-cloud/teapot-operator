@@ -105,6 +105,10 @@ func main() {
 		os.Exit(1)
 	}
 	c, err := readClientConfig("/azure-client-config.json")
+	if err != nil {
+		setupLog.Error(err, "unable to read the azure client config")
+		os.Exit(1)
+	}
 	if err = (&controllers.TeapotAppReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
