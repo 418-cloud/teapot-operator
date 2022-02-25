@@ -1,0 +1,20 @@
+# permissions for end users to view containerapps.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: containerapp-viewer-role
+rules:
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerapps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerapps/status
+  verbs:
+  - get

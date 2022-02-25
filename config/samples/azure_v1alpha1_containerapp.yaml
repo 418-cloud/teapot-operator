@@ -1,0 +1,13 @@
+apiVersion: azure.418.cloud/v1alpha1
+kind: ContainerApp
+metadata:
+  name: containerapp-sample
+spec:
+  containerEnvironmentName: containerenvironment-sample
+  targetPort: 8080
+  containersTemplate:
+    name: traefik-whoami
+    image: docker.io/traefik/whoami:latest
+    resources:
+      cpu: ".25"
+      memory: ".5Gi"

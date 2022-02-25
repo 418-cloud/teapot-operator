@@ -56,6 +56,32 @@ rules:
 - apiGroups:
   - azure.418.cloud
   resources:
+  - containerapps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerapps/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerapps/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - azure.418.cloud
+  resources:
   - containerenvironments
   verbs:
   - create

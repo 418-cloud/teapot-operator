@@ -1,0 +1,24 @@
+# permissions for end users to edit containerapps.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: containerapp-editor-role
+rules:
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerapps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - azure.418.cloud
+  resources:
+  - containerapps/status
+  verbs:
+  - get

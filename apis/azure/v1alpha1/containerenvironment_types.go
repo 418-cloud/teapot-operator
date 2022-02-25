@@ -41,6 +41,7 @@ type ContainerEnvironmentStatus struct {
 	EnvironmentName   string `json:"environmentName,omitempty"`
 	EnvironmentIP     string `json:"environmentIP,omitempty"`
 	EnvironmentStatus string `json:"environmentStatus,omitempty"`
+	EnvironmentFQDN   string `json:"environemntFQDN,omitempty"`
 }
 
 //+kubebuilder:object:root=true

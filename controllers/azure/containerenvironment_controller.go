@@ -85,6 +85,7 @@ func (r *ContainerEnvironmentReconciler) Reconcile(ctx context.Context, req ctrl
 	containerenvironment.Status.EnvironmentName = *kubeEnv.Name
 	containerenvironment.Status.EnvironmentIP = *kubeEnv.StaticIP
 	containerenvironment.Status.EnvironmentStatus = kubeEnv.Status
+	containerenvironment.Status.EnvironmentFQDN = *kubeEnv.DefaultDomain
 
 	if err := r.Status().Update(ctx, &containerenvironment); err != nil {
 		logger.Error(err, "unable to update status")
