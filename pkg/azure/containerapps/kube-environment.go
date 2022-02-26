@@ -4,6 +4,7 @@ import (
 	"context"
 
 	azurev1alpha1 "github.com/418-cloud/teapot-operator/apis/azure/v1alpha1"
+	azurehelpers "github.com/418-cloud/teapot-operator/pkg/azure/helpers"
 	"github.com/418-cloud/teapot-operator/pkg/utils/to"
 	"github.com/Azure/azure-sdk-for-go/services/operationalinsights/mgmt/2020-08-01/operationalinsights"
 	"github.com/Azure/azure-sdk-for-go/services/web/mgmt/2021-03-01/web"
@@ -13,12 +14,19 @@ import (
 
 func CreateNewKubeEnvironment(ctx context.Context, authorizer autorest.Authorizer, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (*web.KubeEnvironment, error) {
 	logger := log.FromContext(ctx).WithValues("subscription", subscription, "resourcegroup", resourcegroup)
-	id, key, err := createNewLogAnalytics(ctx, authorizer, env, subscription, resourcegroup)
-	if err != nil {
-		logger.Error(err, "failed to create new log analytics workspace")
+	id, key, err := getLogWorkspace(ctx, authorizer, env, subscription, resourcegroup)
+	if azurehelpers.ResourceNotFound(err) {
+		logger.Info("creating new log workspace")
+		id, key, err = createNewLogWorkspace(ctx, authorizer, env, subscription, resourcegroup)
+		if err != nil {
+			logger.Error(err, "failed to create new log analytics workspace")
+			return nil, err
+		}
+		logger.Info("created new log analytics workspace", "workspace", id)
+	} else if err != nil {
+		logger.Error(err, "failed to get log analytics workspace")
 		return nil, err
 	}
-	logger.Info("created new log analytics workspace", "workspace", id)
 	client := web.NewKubeEnvironmentsClient(subscription)
 
 	client.Authorizer = authorizer
@@ -68,7 +76,25 @@ func GetKubeEnvironment(ctx context.Context, authorizer autorest.Authorizer, env
 	return &ke, nil
 }
 
-func createNewLogAnalytics(ctx context.Context, authorizer autorest.Authorizer, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (customerID, sharedKey string, err error) {
+func getLogWorkspace(ctx context.Context, authorizer autorest.Authorizer, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (customerID, sharedKey string, err error) {
+	client := operationalinsights.NewWorkspacesClient(subscription)
+	client.Authorizer = authorizer
+	w, err := client.Get(ctx, resourcegroup, env.Name)
+	if err != nil {
+		return
+	}
+	customerID = *w.CustomerID
+	sharedKeysClient := operationalinsights.NewSharedKeysClient(subscription)
+	sharedKeysClient.Authorizer = authorizer
+	k, err := sharedKeysClient.GetSharedKeys(ctx, resourcegroup, env.Name)
+	if err != nil {
+		return
+	}
+	sharedKey = *k.PrimarySharedKey
+	return
+}
+
+func createNewLogWorkspace(ctx context.Context, authorizer autorest.Authorizer, env azurev1alpha1.ContainerEnvironment, subscription, resourcegroup string) (customerID, sharedKey string, err error) {
 	client := operationalinsights.NewWorkspacesClient(subscription)
 	client.Authorizer = authorizer
 	workspace := operationalinsights.Workspace{

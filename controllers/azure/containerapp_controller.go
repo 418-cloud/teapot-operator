@@ -31,7 +31,7 @@ import (
 	configv2 "github.com/418-cloud/teapot-operator/apis/config/v2"
 	azureclient "github.com/418-cloud/teapot-operator/pkg/azure/client"
 	"github.com/418-cloud/teapot-operator/pkg/azure/containerapps"
-	"github.com/Azure/go-autorest/autorest"
+	azurehelpers "github.com/418-cloud/teapot-operator/pkg/azure/helpers"
 )
 
 // ContainerAppReconciler reconciles a ContainerApp object
@@ -96,7 +96,7 @@ func (r *ContainerAppReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		return ctrl.Result{}, err
 	}
 	app, err := containerapps.GetAzureContainerApp(ctx, a, containerapp, r.Config.Subscription, r.Config.ResourceGroupName)
-	if e, ok := err.(autorest.DetailedError); ok && e.Response.StatusCode == 404 {
+	if azurehelpers.ResourceNotFound(err) {
 		logger.Info("Creating new kube environment")
 		app, err = containerapps.CreateAzureContainerApp(ctx, a, containerapp, r.Config.Subscription, r.Config.ResourceGroupName, env.Spec.Location, env.Status.EnvironmentID)
 		if err != nil {
