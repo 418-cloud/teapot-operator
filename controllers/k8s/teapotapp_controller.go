@@ -198,6 +198,7 @@ func (r *TeapotAppReconciler) updateDeployment(ctx context.Context, teapotapp *k
 	}
 	deployment.Spec.Template.Spec.Containers[i].Resources.Limits = teapotapp.GetLimits()
 	deployment.Spec.Template.Spec.Containers[i].Resources.Requests = teapotapp.GetRequests()
+	deployment.Spec.Template.Spec.Containers[i].Args = teapotapp.Spec.Args
 	if err := r.Update(ctx, &deployment); err != nil {
 		return fmt.Errorf("unable to update Deployment. %v", err)
 	}
@@ -268,6 +269,7 @@ func newDeployment(teapotapp *k8sv1alpha1.TeapotApp) appsv1.Deployment {
 								Limits:   teapotapp.GetLimits(),
 								Requests: teapotapp.GetRequests(),
 							},
+							Args: teapotapp.Spec.Args,
 						},
 					},
 				},

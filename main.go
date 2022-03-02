@@ -104,11 +104,7 @@ func main() {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
-	c, err := readClientConfig("/azure-client-config.json")
-	if err != nil {
-		setupLog.Error(err, "unable to read the azure client config")
-		os.Exit(1)
-	}
+
 	if err = (&controllers.TeapotAppReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
@@ -117,23 +113,28 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "TeapotApp")
 		os.Exit(1)
 	}
-	if err = (&azurecontrollers.ContainerEnvironmentReconciler{
-		Client:       mgr.GetClient(),
-		Scheme:       mgr.GetScheme(),
-		Config:       ctrlConfig,
-		ClientConfig: c,
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "ContainerEnvironment")
-		os.Exit(1)
-	}
-	if err = (&azurecontrollers.ContainerAppReconciler{
-		Client:       mgr.GetClient(),
-		Scheme:       mgr.GetScheme(),
-		Config:       ctrlConfig,
-		ClientConfig: c,
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "ContainerApp")
-		os.Exit(1)
+	c, err := readClientConfig("/azure-client-config.json")
+	if err != nil {
+		setupLog.Error(err, "unable to read the azure client config. Not setting up azure based controllers")
+	} else {
+		if err = (&azurecontrollers.ContainerEnvironmentReconciler{
+			Client:       mgr.GetClient(),
+			Scheme:       mgr.GetScheme(),
+			Config:       ctrlConfig,
+			ClientConfig: c,
+		}).SetupWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "ContainerEnvironment")
+			os.Exit(1)
+		}
+		if err = (&azurecontrollers.ContainerAppReconciler{
+			Client:       mgr.GetClient(),
+			Scheme:       mgr.GetScheme(),
+			Config:       ctrlConfig,
+			ClientConfig: c,
+		}).SetupWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "ContainerApp")
+			os.Exit(1)
+		}
 	}
 	//+kubebuilder:scaffold:builder
 

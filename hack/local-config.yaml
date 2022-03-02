@@ -1,0 +1,14 @@
+apiVersion: config.418.cloud/v2
+kind: ProjectConfig
+health:
+  healthProbeBindAddress: :8081
+metrics:
+  bindAddress: 127.0.0.1:8080
+webhook:
+  port: 9443
+leaderElection:
+  leaderElect: false
+  resourceName: b1ba06c1.418.cloud
+domain: "localhost:9080"
+protocol: http
+resourceGroupName: teapot-shadow-rg

@@ -39,6 +39,7 @@ type TeapotAppSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	Image     string             `json:"image,omitempty"`
+	Args      []string           `json:"args,omitempty"`
 	Scale     TeapotAppScale     `json:"scale,omitempty"`
 	Resources TeapotAppResources `json:"resources,omitempty"`
 	Path      string             `json:"path,omitempty"`
@@ -120,6 +121,9 @@ func (t *TeapotApp) IsDeploymentOutdated(deployment appsv1.Deployment) bool {
 	if t.Spec.Resources.Limits != nil &&
 		(t.Spec.Resources.Limits.CPU != locators.GetContainerInDeployment(deployment, t.Name).Resources.Limits.Cpu().String() ||
 			t.Spec.Resources.Limits.Memory != locators.GetContainerInDeployment(deployment, t.Name).Resources.Limits.Memory().String()) {
+		return true
+	}
+	if t.Spec.Args != nil && !strings.EqualFold(strings.Join(t.Spec.Args, " "), strings.Join(locators.GetContainerInDeployment(deployment, t.Name).Args, " ")) {
 		return true
 	}
 	return false

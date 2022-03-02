@@ -7,7 +7,7 @@ spec:
   targetPort: 80
   containersTemplate:
     name: traefik-whoami
-    image: docker.io/traefik/whoami:latest
+    image: ghcr.io/418-cloud/testapp:v0.0.1
     resources:
       cpu: ".25"
       memory: ".5Gi"

@@ -45,6 +45,7 @@ func CreateAzureContainerApp(ctx context.Context, authorizer autorest.Authorizer
 						Name:    &app.Spec.ContainersTemplate.Name,
 						Image:   &app.Spec.ContainersTemplate.Image,
 						Command: &[]string{},
+						Args:    app.Spec.ContainersTemplate.Args,
 						Resources: &web.ContainerResources{
 							CPU:    &cpu,
 							Memory: &memory,

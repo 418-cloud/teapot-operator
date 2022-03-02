@@ -46,6 +46,10 @@ spec:
               containersTemplate:
                 description: ContainersTemplate template for the deployed containers
                 properties:
+                  args:
+                    items:
+                      type: string
+                    type: array
                   image:
                     type: string
                   name:
@@ -63,6 +67,7 @@ spec:
                     - memory
                     type: object
                 required:
+                - args
                 - image
                 - name
                 type: object

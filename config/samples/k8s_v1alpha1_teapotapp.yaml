@@ -3,7 +3,7 @@ kind: TeapotApp
 metadata:
   name: teapotapp-sample
 spec:
-  image: ghcr.io/tjololo/hello-go-web:v1.1.0
+  image: ghcr.io/418-cloud/testapp:v0.0.1
   scale:
     replicas: 1
     autoscaling:

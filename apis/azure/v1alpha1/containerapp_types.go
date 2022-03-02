@@ -74,6 +74,7 @@ func init() {
 type ContainersTemplate struct {
 	Name      string                       `json:"name"`
 	Image     string                       `json:"image"`
+	Args      *[]string                    `json:"args"`
 	Resources *ContainersTemplateResources `json:"resources,omitempty"`
 }
 
