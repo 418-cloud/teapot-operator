@@ -222,7 +222,7 @@ func (r *TeapotAppReconciler) updateAutoscaling(ctx context.Context, teapotapp *
 }
 
 func (r *TeapotAppReconciler) updateIngressRoute(ctx context.Context, teapotapp *k8sv1alpha1.TeapotApp, ingressRoute traefikv1alpha1.IngressRoute) error {
-	ingressRoute.Spec.Routes[0].Match = "Host(`localhost`) && PathPrefix(`" + teapotapp.Spec.Path + "`)"
+	ingressRoute.Spec.Routes[0].Match = "Host(`"+r.Config.Domain+"`) && PathPrefix(`" + teapotapp.Spec.Path + "`)"
 	if err := r.Update(ctx, &ingressRoute); err != nil {
 		return fmt.Errorf("unable to update IngressRoute. %v", err)
 	}
