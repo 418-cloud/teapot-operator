@@ -9,7 +9,7 @@ webhook:
 leaderElection:
   leaderElect: true
   resourceName: b1ba06c1.418.cloud
-domain: example.com
+domain: ${config_domain}
 protocol: https
 resourceGroupName: teapot-shadow-rg
-tlsSecret: tls-secret-name
+tlsSecret: ${config_tls_secret}
