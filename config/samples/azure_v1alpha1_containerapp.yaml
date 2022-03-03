@@ -4,10 +4,12 @@ metadata:
   name: containerapp-sample
 spec:
   containerEnvironmentName: containerenvironment-sample
-  targetPort: 80
+  targetPort: 8080
   containersTemplate:
     name: traefik-whoami
     image: ghcr.io/418-cloud/testapp:v0.0.1
+    args:
+    - -response=Hello from azure 
     resources:
       cpu: ".25"
       memory: ".5Gi"

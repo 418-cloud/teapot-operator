@@ -107,7 +107,11 @@ func (r *ContainerAppReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		logger.Error(err, "unable to get containerapp")
 		return ctrl.Result{}, err
 	}
-	containerapp.Status.FQDN = fmt.Sprintf("https://%s", *app.LatestRevisionFqdn)
+	if app.LatestRevisionFqdn != nil {
+		containerapp.Status.FQDN = fmt.Sprintf("https://%s", *app.LatestRevisionFqdn)
+	} else {
+		containerapp.Status.FQDN = ""
+	}
 	containerapp.Status.LatestStatus = fmt.Sprintf("ContainerApp %s is %s", containerapp.Name, app.ProvisioningState)
 	if err := r.Status().Update(ctx, &containerapp); err != nil {
 		logger.Error(err, "unable to update ContainerApp status")
