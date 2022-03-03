@@ -38,6 +38,7 @@ import (
 	"github.com/418-cloud/teapot-operator/pkg/utils/locators"
 	"github.com/418-cloud/teapot-operator/pkg/utils/to"
 	traefikv1alpha1 "github.com/traefik/traefik/v2/pkg/provider/kubernetes/crd/traefik/v1alpha1"
+	traefiktype "github.com/traefik/traefik/v2/pkg/types"
 )
 
 // TeapotAppReconciler reconciles a TeapotApp object
@@ -183,7 +184,7 @@ func (r *TeapotAppReconciler) createNewService(ctx context.Context, teapotapp *k
 }
 
 func (r *TeapotAppReconciler) createNewIngressRoute(ctx context.Context, teapotapp *k8sv1alpha1.TeapotApp) error {
-	s := newIngressRoute(teapotapp, r.Config.Domain)
+	s := newIngressRoute(teapotapp, r.Config.Domain, r.Config.TLSSecret)
 	if err := r.Create(ctx, &s); err != nil {
 		return fmt.Errorf("unable to create ingressroute. %v", err)
 	}
@@ -363,7 +364,7 @@ func newService(teapotapp *k8sv1alpha1.TeapotApp) corev1.Service {
 	return s
 }
 
-func newIngressRoute(teapotapp *k8sv1alpha1.TeapotApp, domain string) traefikv1alpha1.IngressRoute {
+func newIngressRoute(teapotapp *k8sv1alpha1.TeapotApp, domain, secret string) traefikv1alpha1.IngressRoute {
 	return traefikv1alpha1.IngressRoute{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      teapotapp.Name,
@@ -396,6 +397,14 @@ func newIngressRoute(teapotapp *k8sv1alpha1.TeapotApp, domain string) traefikv1a
 								Port: intstr.FromInt(80),
 							},
 						},
+					},
+				},
+			},
+			TLS: &traefikv1alpha1.TLS{
+				SecretName: secret,
+				Domains: []traefiktype.Domain{
+					{
+						Main: domain,
 					},
 				},
 			},

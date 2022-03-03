@@ -32,6 +32,7 @@ type ProjectConfig struct {
 	// ControllerManagerConfigurationSpec returns the contfigurations for controllers
 	cfg.ControllerManagerConfigurationSpec `json:",inline"`
 	Domain                                 string `json:"domain,omitempty"`
+	TLSSecret                              string `json:"tlsSecret,omitempty"`
 	Protocol                               string `json:"protocol,omitempty"`
 	DefaultScale                           int    `json:"defaultScale,omitempty"`
 	ResourceGroupName                      string `json:"resourceGroupName,omitempty"`

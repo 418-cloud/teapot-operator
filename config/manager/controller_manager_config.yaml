@@ -12,3 +12,4 @@ leaderElection:
 domain: example.com
 protocol: https
 resourceGroupName: teapot-shadow-rg
+tlsSecret: tls-secret-name
