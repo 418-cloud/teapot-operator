@@ -234,6 +234,7 @@ func newDeployment(teapotapp *k8sv1alpha1.TeapotApp) appsv1.Deployment {
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      teapotapp.Name,
 			Namespace: teapotapp.Namespace,
+			Labels:    teapotapp.Labels,
 			OwnerReferences: []metav1.OwnerReference{
 				{
 					APIVersion:         teapotapp.APIVersion,
@@ -288,6 +289,7 @@ func newAutoscaling(teapotapp *k8sv1alpha1.TeapotApp) autoscalingv2beta2.Horizon
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      teapotapp.Name,
 			Namespace: teapotapp.Namespace,
+			Labels:    teapotapp.Labels,
 			OwnerReferences: []metav1.OwnerReference{
 				{
 					APIVersion:         teapotapp.APIVersion,
@@ -333,6 +335,7 @@ func newService(teapotapp *k8sv1alpha1.TeapotApp) corev1.Service {
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      teapotapp.Name,
 			Namespace: teapotapp.Namespace,
+			Labels:    teapotapp.Labels,
 			OwnerReferences: []metav1.OwnerReference{
 				{
 					APIVersion:         teapotapp.APIVersion,
@@ -369,6 +372,7 @@ func newIngressRoute(teapotapp *k8sv1alpha1.TeapotApp, domain, secret string) tr
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      teapotapp.Name,
 			Namespace: teapotapp.Namespace,
+			Labels:    teapotapp.Labels,
 			OwnerReferences: []metav1.OwnerReference{
 				{
 					APIVersion:         teapotapp.APIVersion,
